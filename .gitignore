@@ -1,0 +1,14 @@
+# Environments
+.env
+
+# Credentials (CRUCIAL TO IGNORE)
+client_secrets.json
+token.pickle
+
+# Cache and temporary folders
+__pycache__/
+*.pyc
+
+# Video assets
+output/
+raw_clips/
