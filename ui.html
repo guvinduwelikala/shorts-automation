@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shorts Automation Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #081018;
+      --bg-2: #101a27;
+      --panel: rgba(13, 20, 32, 0.88);
+      --panel-strong: #111b2b;
+      --line: rgba(255, 255, 255, 0.1);
+      --text: #f4f7fb;
+      --muted: #9aa7b8;
+      --accent: #f4b740;
+      --accent-2: #3bc7a7;
+      --danger: #ff6b6b;
+      --success: #58d68d;
+      --shadow: 0 24px 60px rgba(0, 0, 0, 0.36);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      background:
+        radial-gradient(circle at top left, rgba(244, 183, 64, 0.16), transparent 30%),
+        radial-gradient(circle at top right, rgba(59, 199, 167, 0.14), transparent 34%),
+        linear-gradient(180deg, #071018 0%, #0b1320 45%, #081018 100%);
+      color: var(--text);
+      font-family: "Space Grotesk", system-ui, sans-serif;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      mask-image: linear-gradient(180deg, rgba(0,0,0,0.8), transparent 92%);
+      opacity: 0.35;
+    }
+
+    .wrap {
+      position: relative;
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 32px 20px 42px;
+    }
+
+    .hero {
+      display: grid;
+      gap: 22px;
+      grid-template-columns: minmax(0, 1.3fr) minmax(320px, 0.9fr);
+      align-items: stretch;
+      margin-bottom: 22px;
+    }
+
+    .hero-copy,
+    .hero-aside,
+    .panel,
+    .tile {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+    }
+
+    .hero-copy {
+      padding: 30px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero-copy::after {
+      content: "";
+      position: absolute;
+      right: -120px;
+      top: -80px;
+      width: 280px;
+      height: 280px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(244, 183, 64, 0.2), transparent 68%);
+      filter: blur(10px);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: rgba(244, 183, 64, 0.12);
+      color: #ffd87d;
+      font-size: 12px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    h1 {
+      margin: 18px 0 12px;
+      font-size: clamp(2.5rem, 5vw, 4.8rem);
+      line-height: 0.95;
+      letter-spacing: -0.05em;
+      max-width: 12ch;
+    }
+
+    .lead {
+      max-width: 60ch;
+      color: var(--muted);
+      font-size: 1.02rem;
+      line-height: 1.65;
+      margin: 0 0 24px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .stat {
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .stat .label {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .stat .value {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .hero-aside {
+      padding: 24px;
+      display: grid;
+      align-content: start;
+      gap: 18px;
+      background: linear-gradient(180deg, rgba(17, 27, 43, 0.98), rgba(11, 18, 30, 0.88));
+    }
+
+    .aside-card {
+      padding: 16px;
+      border-radius: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .aside-card h3,
+    .panel h2,
+    .tile h3 {
+      margin: 0 0 10px;
+      font-size: 1rem;
+      letter-spacing: -0.02em;
+    }
+
+    .aside-card p,
+    .panel p,
+    .tile p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 0.95rem;
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: #dfe8f4;
+      font-size: 0.88rem;
+      white-space: nowrap;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 420px) minmax(0, 1fr);
+      gap: 22px;
+      align-items: start;
+    }
+
+    .panel {
+      padding: 24px;
+    }
+
+    .panel + .panel {
+      margin-top: 22px;
+    }
+
+    form {
+      display: grid;
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    label {
+      display: grid;
+      gap: 8px;
+      font-size: 0.92rem;
+      color: #e9eef6;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(6, 10, 16, 0.72);
+      color: var(--text);
+      border-radius: 16px;
+      padding: 14px 15px;
+      font: inherit;
+      outline: none;
+      transition: border-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: rgba(244, 183, 64, 0.7);
+      box-shadow: 0 0 0 4px rgba(244, 183, 64, 0.12);
+    }
+
+    textarea {
+      min-height: 180px;
+      resize: vertical;
+      font-family: "IBM Plex Mono", ui-monospace, monospace;
+      line-height: 1.55;
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+
+    button {
+      appearance: none;
+      border: 0;
+      border-radius: 14px;
+      padding: 14px 18px;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+    }
+
+    button:disabled {
+      cursor: progress;
+      opacity: 0.7;
+      transform: none;
+    }
+
+    .primary {
+      background: linear-gradient(135deg, #f4b740, #ffdd7a);
+      color: #16202c;
+      box-shadow: 0 16px 30px rgba(244, 183, 64, 0.2);
+    }
+
+    .secondary {
+      background: rgba(255,255,255,0.07);
+      color: var(--text);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .status {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-top: 12px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 0.84rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .badge[data-state="idle"] { color: #d0dae7; }
+    .badge[data-state="running"] { color: #ffe08d; }
+    .badge[data-state="done"] { color: var(--success); }
+    .badge[data-state="error"] { color: var(--danger); }
+
+    .console {
+      margin-top: 16px;
+      background: #05090f;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 18px;
+      min-height: 420px;
+      max-height: 580px;
+      overflow: auto;
+      padding: 16px;
+      font-family: "IBM Plex Mono", ui-monospace, monospace;
+      font-size: 0.88rem;
+      line-height: 1.5;
+      color: #d7e2f2;
+      white-space: pre-wrap;
+    }
+
+    .console .muted {
+      color: #7f91a8;
+    }
+
+    .tiles {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .tile {
+      padding: 18px;
+    }
+
+    .tile strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.96rem;
+      letter-spacing: -0.01em;
+    }
+
+    .footer-note {
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 1024px) {
+      .hero,
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .wrap {
+        padding: 18px 14px 28px;
+      }
+
+      .hero-copy,
+      .hero-aside,
+      .panel {
+        padding: 18px;
+        border-radius: 20px;
+      }
+
+      .stats,
+      .tiles {
+        grid-template-columns: 1fr;
+      }
+
+      .actions {
+        flex-direction: column;
+      }
+
+      button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="hero">
+      <div class="hero-copy">
+        <span class="eyebrow">Shorts automation studio</span>
+        <h1>Build a full YouTube Short from one topic.</h1>
+        <p class="lead">
+          Enter a topic, generate a script, download portrait footage, render subtitles and audio, then upload the finished video. This UI gives you a clean browser workflow on top of the existing Python pipeline.
+        </p>
+        <div class="stats">
+          <div class="stat">
+            <span class="label">Input</span>
+            <span class="value">Topic + privacy</span>
+          </div>
+          <div class="stat">
+            <span class="label">Processing</span>
+            <span class="value">Script, clips, voice, captions</span>
+          </div>
+          <div class="stat">
+            <span class="label">Output</span>
+            <span class="value">Final_Short.mp4 + upload</span>
+          </div>
+        </div>
+      </div>
+      <aside class="hero-aside">
+        <div class="aside-card">
+          <h3>Workflow</h3>
+          <p>1. Generate Pexels search query. 2. Download portrait clips. 3. Build the short. 4. Add voiceover and subtitles. 5. Upload to YouTube.</p>
+          <div class="chip-row">
+            <span class="chip">Pexels</span>
+            <span class="chip">Gemini</span>
+            <span class="chip">Edge TTS</span>
+            <span class="chip">MoviePy</span>
+            <span class="chip">YouTube API</span>
+          </div>
+        </div>
+        <div class="aside-card">
+          <h3>Launch path</h3>
+          <p>The server runs locally from your Python environment. The UI stays in the browser while the pipeline executes in the background.</p>
+        </div>
+      </aside>
+    </section>
+
+    <section class="grid">
+      <div>
+        <div class="panel">
+          <h2>Create a short</h2>
+          <p>Fill in the topic and publish preference, then start the job. Logs update live as each stage completes.</p>
+          <form id="job-form">
+            <label>
+              Topic
+              <input id="topic" name="topic" type="text" placeholder="why 99% of people stay broke" value="why 99% of people stay broke" required />
+            </label>
+            <label>
+              Privacy
+              <select id="privacy" name="privacy">
+                <option value="public" selected>public</option>
+                <option value="unlisted">unlisted</option>
+                <option value="private">private</option>
+              </select>
+            </label>
+            <div class="actions">
+              <button class="primary" type="submit" id="run-button">Generate short</button>
+              <button class="secondary" type="button" id="reset-button">Reset log</button>
+            </div>
+          </form>
+          <div class="status">
+            <span class="badge" id="status-badge" data-state="idle">Idle</span>
+            <span class="badge" id="job-id-badge">No job running</span>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h2>Project paths</h2>
+          <div class="tiles">
+            <div class="tile">
+              <strong>Input clips</strong>
+              <p>raw_clips/</p>
+            </div>
+            <div class="tile">
+              <strong>Rendered output</strong>
+              <p>output/Final_Short.mp4</p>
+            </div>
+            <div class="tile">
+              <strong>Voiceover</strong>
+              <p>output/voiceover.mp3</p>
+            </div>
+            <div class="tile">
+              <strong>Subtitle timings</strong>
+              <p>output/word_timings.json</p>
+            </div>
+          </div>
+          <p class="footer-note">If API keys are missing, the server will surface the failure in the live log panel so you can fix the environment without leaving the page.</p>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Live log</h2>
+        <p>Output from the pipeline appears here in real time.</p>
+        <div class="console" id="console">Waiting for a job...\n</div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const form = document.getElementById('job-form');
+    const runButton = document.getElementById('run-button');
+    const resetButton = document.getElementById('reset-button');
+    const consoleEl = document.getElementById('console');
+    const statusBadge = document.getElementById('status-badge');
+    const jobIdBadge = document.getElementById('job-id-badge');
+    const topicInput = document.getElementById('topic');
+    const privacyInput = document.getElementById('privacy');
+
+    let activeJobId = null;
+    let pollTimer = null;
+    let backendBase = window.location.origin;
+
+    async function tryHealth(baseUrl) {
+      try {
+        const response = await fetch(`${baseUrl}/api/health`, { cache: 'no-store' });
+        if (!response.ok) {
+          return false;
+        }
+        const payload = await response.json();
+        return payload && payload.ok === true;
+      } catch (_) {
+        return false;
+      }
+    }
+
+    async function resolveBackendBase() {
+      const candidates = [];
+      candidates.push(window.location.origin);
+
+      if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        for (let p = 8000; p <= 8019; p += 1) {
+          candidates.push(`http://127.0.0.1:${p}`);
+        }
+      }
+
+      const uniqueCandidates = [...new Set(candidates)];
+      for (const candidate of uniqueCandidates) {
+        // Prefer the first backend that confirms health.
+        // This allows the UI to work even when opened from a static server (e.g. :5500).
+        if (await tryHealth(candidate)) {
+          return candidate;
+        }
+      }
+      return window.location.origin;
+    }
+
+    async function apiFetch(path, options = {}) {
+      const response = await fetch(`${backendBase}${path}`, options);
+      const raw = await response.text();
+
+      if (!raw) {
+        throw new Error(`Empty response from ${backendBase}${path}`);
+      }
+
+      let payload;
+      try {
+        payload = JSON.parse(raw);
+      } catch (_) {
+        const shortBody = raw.slice(0, 160).replace(/\s+/g, ' ').trim();
+        throw new Error(`Expected JSON from ${backendBase}${path}, got: ${shortBody || 'non-JSON response'}`);
+      }
+
+      if (!response.ok) {
+        throw new Error(payload.error || `Request failed (${response.status})`);
+      }
+
+      return payload;
+    }
+
+    function setBadge(state, text) {
+      statusBadge.dataset.state = state;
+      statusBadge.textContent = text;
+    }
+
+    function setJobId(text) {
+      jobIdBadge.textContent = text;
+    }
+
+    function appendLog(text) {
+      consoleEl.textContent = text || '';
+      consoleEl.scrollTop = consoleEl.scrollHeight;
+    }
+
+    async function pollJob(jobId) {
+      try {
+        const payload = await apiFetch(`/api/jobs/${jobId}`);
+        appendLog(payload.logs || '');
+        setJobId(`Job ${jobId}`);
+
+        if (payload.status === 'running') {
+          setBadge('running', 'Running');
+          pollTimer = window.setTimeout(() => pollJob(jobId), 1000);
+          return;
+        }
+
+        if (payload.status === 'completed') {
+          setBadge('done', 'Completed');
+          runButton.disabled = false;
+          activeJobId = null;
+          return;
+        }
+
+        if (payload.status === 'error') {
+          setBadge('error', 'Failed');
+          runButton.disabled = false;
+          activeJobId = null;
+          return;
+        }
+      } catch (error) {
+        setBadge('error', 'Polling error');
+        appendLog(`Polling failed: ${error.message}. Backend: ${backendBase}`);
+        runButton.disabled = false;
+      }
+    }
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      if (activeJobId) {
+        return;
+      }
+
+      const currentPort = window.location.port || '';
+      const backendPort = (() => {
+        try {
+          return new URL(backendBase).port || '';
+        } catch (_) {
+          return '';
+        }
+      })();
+
+      if (currentPort === '5500' && backendPort === '5500') {
+        backendBase = await resolveBackendBase();
+      }
+
+      runButton.disabled = true;
+      setBadge('running', 'Starting');
+      setJobId('Creating job...');
+      appendLog('Submitting job...\n');
+
+      try {
+        const payload = await apiFetch('/api/run', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            topic: topicInput.value.trim(),
+            privacy: privacyInput.value,
+          }),
+        });
+
+        activeJobId = payload.job_id;
+        setBadge('running', 'Running');
+        setJobId(`Job ${payload.job_id}`);
+        pollJob(payload.job_id);
+      } catch (error) {
+        setBadge('error', 'Failed to start');
+        runButton.disabled = false;
+        appendLog(`\n${error.message}. Check that the UI server is running at ${backendBase}.\n`);
+      }
+    });
+
+    resetButton.addEventListener('click', () => {
+      if (pollTimer) {
+        clearTimeout(pollTimer);
+        pollTimer = null;
+      }
+      activeJobId = null;
+      runButton.disabled = false;
+      setBadge('idle', 'Idle');
+      setJobId('No job running');
+      appendLog('Waiting for a job...\n');
+    });
+
+    window.addEventListener('DOMContentLoaded', async () => {
+      backendBase = await resolveBackendBase();
+      appendLog(`Backend resolved: ${backendBase}\n`);
+      setJobId(`Backend: ${backendBase}`);
+    });
+  </script>
+</body>
+</html>
