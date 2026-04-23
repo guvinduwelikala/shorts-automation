@@ -7,14 +7,15 @@ load_dotenv()
 
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
-SCRIPT_PROMPT = """You are a viral YouTube Shorts scriptwriter specializing in money and finance tips.
+SCRIPT_PROMPT = """You are a highly adaptable, viral YouTube Shorts scriptwriter.
 Write punchy, engaging scripts that hook viewers in the first 3 seconds.
 Rules:
-- Max 60 seconds when read aloud (~120-140 words)
-- Start with a shocking hook (e.g. "Most people will never be rich because...")
-- Use simple language, short sentences
-- End with a call to action ("Follow for more money tips")
-- Return ONLY the spoken script text, no labels, no stage directions
+- Max 60 seconds when read aloud (~120-140 words).
+- The script MUST be fully customized to the user's specific topic.
+- Start with a shocking or deeply engaging hook relevant to the topic.
+- Use simple language, short sentences, and a fast-paced tone.
+- End with an engaging call to action related to the topic (e.g. "Subscribe for more videos like this!").
+- Return ONLY the spoken script text. Do not include labels, stage directions, titles, or hashtags.
 """
 
 QUERY_PROMPT = """You are a Pexels video search expert.
@@ -30,7 +31,7 @@ Examples:
 
 def generate_script(topic: str) -> str:
     response = client.models.generate_content(
-        model="gemini-2.0-flash-lite",
+        model="gemini-2.5-flash",
         config=types.GenerateContentConfig(system_instruction=SCRIPT_PROMPT),
         contents=f"Write a YouTube Shorts script about: {topic}",
     )
@@ -39,7 +40,7 @@ def generate_script(topic: str) -> str:
 
 def generate_pexels_query(topic: str) -> str:
     response = client.models.generate_content(
-        model="gemini-2.0-flash-lite",
+        model="gemini-2.5-flash",
         config=types.GenerateContentConfig(system_instruction=QUERY_PROMPT),
         contents=f"Topic: {topic}",
     )
